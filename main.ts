@@ -66,14 +66,35 @@ const handler = async (req: Request): Promise<Response> => {
                 autores: autores
             });
 
-            const returnedObjectInserted = {
+            const returnedBookInserted = {
                 id: insertedId,
                 titulo: payload.titulo,
                 copiasDisponibles: payload.copiasDisponibles,
                 autores: autores.map((u) => fromAutorToDtoReturned(u))
             };
-            return new Response(JSON.stringify(returnedObjectInserted), { status: 200 })
-        }
+            return new Response(JSON.stringify(returnedBookInserted), { status: 200 })
+        } else if (path === "/autor") {
+            const payload = await req.json();
+            if (!payload.nombre && !payload.biografia)
+                return new Response("El nombre y la biografia son campos requeridos.", { status: 400 })
+            const insertedBook = await autorCollection.find({ nombre: payload.titulo }).toArray();
+            if (insertedBook)
+                return new Response("El autor ya existe", { status: 400 })
+            const { insertedId } = await autorCollection.insertOne({
+                nombre: payload.nombre,
+                biografia: payload.biografia,
+            });
+            const returnedAutor = {
+                id: insertedId,
+                nombre: payload.nombre,
+                biografia: payload.biografia,
+            };
+            return new Response(JSON.stringify(returnedAutor), { status: 200 })
+        } else
+            return new Response("Error al llamar al endPoint con el metodo POST", { status: 400 })
+
+    } else if (method === "DELETE") {
+
     }
 
     return new Response("Error al llamar al endPoint", { status: 400 })

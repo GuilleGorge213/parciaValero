@@ -10,7 +10,7 @@ export const fromLibroModelToDto = async (libroModel : LibroModel, autorCollecti
     return {
         id: libroModel._id?.toString(),
         titulo: libroModel.titulo,
-        copias: libroModel.copias,
+        copiasDisponibles: libroModel.copiasDisponibles,
         autores: autores.map((u) => fromAutorModelToDto(u))
     }
 }
