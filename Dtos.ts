@@ -10,7 +10,7 @@ Copias Disponibles: Número de copias disponibles en la biblioteca.
 export type Libro = {
     id: string,
     titulo: string,
-    copias: number,
+    copiasDisponibles: number,
     autores: Autor[]
 }
 
@@ -23,4 +23,10 @@ export type Autor = {
     id: string,
     nombre: string,
     biografia: string
+}
+
+export type AutorInserted = {
+    id: string,
+    nombre: string,
+
 }

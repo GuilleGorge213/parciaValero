@@ -1,6 +1,6 @@
 import { Collection } from "mongodb";
+import { Autor, AutorInserted, Libro } from "./Dtos.ts";
 import { AutorModel, LibroModel } from "./Model.ts";
-import { Autor, Libro } from "./Dtos.ts";
 
 
 
@@ -16,11 +16,17 @@ export const fromLibroModelToDto = async (libroModel : LibroModel, autorCollecti
 }
 
 export const fromAutorModelToDto = (autorModel: AutorModel) : Autor => {
-
     return {
         id : autorModel._id?.toString(),
         nombre: autorModel.nombre,
         biografia: autorModel.biografia
     }
-
 }
+
+export const fromAutorToDtoReturned = (autorModel: AutorModel) : AutorInserted => {
+    return {
+        id : autorModel._id?.toString(),
+        nombre: autorModel.nombre,
+    }
+}
+

@@ -9,11 +9,9 @@ Copias Disponibles: Número de copias disponibles en la biblioteca.
 
 */
 
-
-
 export type LibroModel = OptionalId<{
     titulo: string,
-    copias: number,
+    copiasDisponibles: number,
     autores: OptionalId[]
 }>;
 

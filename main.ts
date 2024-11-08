@@ -1,6 +1,6 @@
-import { MongoClient, ObjectId } from "mongodb";
+import { MongoClient } from "mongodb";
 import { AutorModel, LibroModel } from "./Model.ts";
-import { fromLibroModelToDto } from "./functions.ts";
+import { fromAutorToDtoReturned, fromLibroModelToDto } from "./functions.ts";
 
 const MONGO_URL = Deno.env.get("MONGO_URL");
 if (!MONGO_URL) {
@@ -48,6 +48,32 @@ const handler = async (req: Request): Promise<Response> => {
             }
         }
         return new Response("Endpoint no encontrado", { status: 400 })
+    } else if (method === "POST") {
+        if (path === "/libro") {
+            const payload = await req.json();
+            const numeroDeAutor = payload.autores;
+            if (!payload.titulo && !payload.autores && !payload.copias)
+                return new Response("El título, los autores y las copias son campos requeridos.", { status: 404 })
+            const insertedBook = await libroCollection.find({ titulo: payload.titulo }).toArray();
+            if (insertedBook) return new Response("El libro ya existe", { status: 400 })
+            const autores = await autorCollection.find({ _id: { $in: payload.autores } }).toArray();
+            if (numeroDeAutor != autores.length)
+                return new Response("Autor no existe", { status: 400 })
+
+            const { insertedId } = await libroCollection.insertOne({
+                titulo: payload.titulo,
+                copiasDisponibles: payload.copiasDisponibles,
+                autores: autores
+            });
+
+            const returnedObjectInserted = {
+                id: insertedId,
+                titulo: payload.titulo,
+                copiasDisponibles: payload.copiasDisponibles,
+                autores: autores.map((u) => fromAutorToDtoReturned(u))
+            };
+            return new Response(JSON.stringify(returnedObjectInserted), { status: 200 })
+        }
     }
 
     return new Response("Error al llamar al endPoint", { status: 400 })
