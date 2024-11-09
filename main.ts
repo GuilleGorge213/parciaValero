@@ -56,10 +56,10 @@ const handler = async (req: Request): Promise<Response> => {
                 return new Response("El título, los autores y las copias son campos requeridos.", { status: 404 })
             const insertedBook = await libroCollection.find({ titulo: payload.titulo }).toArray();
             if (insertedBook.length > 0) return new Response("El libro ya existe", { status: 400 })
-                //PENDIENTE ARREGLAR LA BUSQUEDA DE AUTORES
-            //const autores = await autorCollection.find({ _id: { $in: new ObjectId(payload.autores) } }).toArray();
-            //if (numeroDeAutor.length != autores.length) //VALIDACION
-            //    return new Response("Autor no existe", { status: 400 })
+            const idsAutores = payload.autores.map((autor: string) => autor).map((id : string) => new ObjectId(id))
+            const autores = await autorCollection.find({ _id: { $in: idsAutores } }).toArray();
+            if (numeroDeAutor.length != autores.length)
+                return new Response("Autor no existe", { status: 400 })
             const { insertedId } = await libroCollection.insertOne({
                 titulo: payload.titulo,
                 copiasDisponibles: payload.copiasDisponibles,
@@ -68,11 +68,11 @@ const handler = async (req: Request): Promise<Response> => {
             const returnedBookInserted = {
                 id: insertedId,
                 titulo: payload.titulo,
-                autores: [],
-                //{
-                    
-                    //autor: autores.map((u) => fromAutorToDtoReturned(u))
-               // } ,
+                autores:
+                {
+
+                    autor: autores.map((u) => fromAutorToDtoReturned(u))
+                },
                 copiasDisponibles: payload.copiasDisponibles
             };
             return new Response(JSON.stringify(returnedBookInserted), { status: 200 })
@@ -89,12 +89,12 @@ const handler = async (req: Request): Promise<Response> => {
             });
             const returnedAutor = {
                 message: "Autor creado exitosamente",
-                autor :{ 
+                autor: {
                     id: insertedId,
                     nombre: payload.nombre,
                     biografia: payload.biografia
                 }
-              
+
             };
             return new Response(JSON.stringify(returnedAutor), { status: 200 })
         } else
@@ -104,12 +104,12 @@ const handler = async (req: Request): Promise<Response> => {
         if (path === "/libro") {
             const payload = await req.json();
             if (!payload.id)
-                if (payload.length === 0) 
+                if (payload.length === 0)
                     return new Response("Por favor informe correctamente el id", { status: 404 })
             const { deletedCount } = await libroCollection.deleteOne({ _id: new ObjectId(payload.id) });
-            if(deletedCount===0) 
+            if (deletedCount === 0)
                 return new Response("Libro no encontrado.", { status: 404 })
-            return new Response("Libro eliminado exitosamente.",{ status: 200 })
+            return new Response("Libro eliminado exitosamente.", { status: 200 })
 
         }
     }
