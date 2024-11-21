@@ -7,26 +7,9 @@ Copias Disponibles: Número de copias disponibles en la biblioteca.
 
 */
 
-export type Libro = {
+export type tareaDTO = {
     id: string,
-    titulo: string,
-    copiasDisponibles: number,
-    autores: Autor[]
+    title: string,
+    completed: boolean,
 }
 
-/*
-Nombre Completo: Nombre completo del autor.
-Biografía: Breve biografía del autor.
-*/
-
-export type Autor = {
-    id: string,
-    nombre: string,
-    biografia: string
-}
-
-export type AutorInserted = {
-    id: string,
-    nombre: string,
-
-}
