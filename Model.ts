@@ -1,13 +1,26 @@
 
-import { OptionalId } from "mongodb";
+import { ObjectId, OptionalId } from "mongodb";
 
-
-/*
-Nombre Completo: Nombre completo del autor.
-Biografía: Breve biografía del autor.
-*/
-
-export type tareaModel = OptionalId<{
-    title: string,
-    completed: boolean
+export type userModel = OptionalId<{
+    name: string,
+    email: string,
+    created_at: Date
 }>;
+
+export type projectModel = OptionalId<{
+    name: string,
+    description: string,
+    start_date: Date,
+    end_date: Date | null,
+    user_id:  ObjectId 
+}>;
+
+export type taskModel = OptionalId<{
+    title: string,
+    description: string,
+    status: string,
+    created_at: Date,
+    due_date: Date,
+    project_id: ObjectId
+}>;
+
